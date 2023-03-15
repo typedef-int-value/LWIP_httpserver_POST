@@ -137,7 +137,7 @@
 
 /** Set this to 1 on platforms where strnstr is not available */
 #ifndef LWIP_HTTPD_STRNSTR_PRIVATE
-#define LWIP_HTTPD_STRNSTR_PRIVATE          1
+#define LWIP_HTTPD_STRNSTR_PRIVATE          0
 #endif
 
 /** Set this to one to show error pages when parsing a request fails instead
@@ -1828,6 +1828,8 @@ http_post_request(struct pbuf **inp, struct http_state *hs,
  */
 void httpd_post_data_recved(void *connection, u16_t recved_len)
 {
+  err_t err;
+
   struct http_state *hs = (struct http_state*)connection;
   if (hs != NULL) {
     if (hs->no_auto_wnd) {
@@ -1845,7 +1847,7 @@ void httpd_post_data_recved(void *connection, u16_t recved_len)
         }
         if ((hs->post_content_len_left == 0) && (hs->unrecved_bytes == 0)) {
           /* finished handling POST */
-          http_handle_post_finished(hs);
+          http_handle_post_finished(hs, err);
           http_send(hs->pcb, hs);
         }
       }

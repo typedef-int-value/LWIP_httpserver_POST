@@ -233,24 +233,28 @@ httpd_post_begin(void *connection,
  * @return ERR_OK: Data accepted.
  *         another err_t: Data denied, http_post_get_response_uri will be called.
  */
-err_t
-httpd_post_receive_data(void *connection, struct pbuf *p) {
+err_t httpd_post_receive_data(void *connection, struct pbuf *p)
+{
 
-    char *data;
-    err_t ret_val = ERR_ARG;
+  char *data;
+  err_t ret_val = ERR_ARG;
 
-    struct http_state *hs = (struct http_state*)connection;
-    if (hs != NULL && p != NULL) {
-        data = p->payload;
-        ret_val = http_parse_post(data, http_post_content_len);
-    }
+  struct http_state *hs = (struct http_state*) connection;
+  if (hs != NULL && p != NULL)
+  {
+    data = p->payload;
+    //ret_val = http_parse_post(data, http_post_content_len);
+    ret_val = http_parse_post(p->payload, p->len);
+  }
 
-    if (p != NULL) {
-        pbuf_free(p);
-    }
+  if (p != NULL)
+  {
+    pbuf_free(p);
+  }
 
-    return ret_val;
+  return ret_val;
 }
+
 
 /** Called when all data is received or when the connection is closed.
  * The application must return the filename/URI of a file to send in response
